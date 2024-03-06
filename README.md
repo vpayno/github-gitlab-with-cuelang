@@ -40,12 +40,11 @@ ls
 
 This should only be run once. It's here as documentation and it was used for the original import.
 
-```bash { background=false category=github-import closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=workflow-import-github promptEnv=true terminalRows=10 }
+```bash { background=false category=github-import closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=workflow-import-github promptEnv=true terminalRows=20 }
 set -ex
 
 if [[ -f .runme-lock-github-workflow-import ]]; then
-    printf "GitHub Workflows were already imported.\n"
-    exit
+    gum confirm "GitHub Workflows were already imported. Re-Import?" || exit
 fi
 
 cd .github/workflows/
