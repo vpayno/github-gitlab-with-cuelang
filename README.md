@@ -58,3 +58,21 @@ ls
 
 touch "$(git rev-parse --show-toplevel)/.runme-lock-github-workflow-import"
 ```
+
+## Generating Workflows from Cue Data
+
+To export the workflows run the following command:
+
+```bash { background=false category=github-export closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=workflow-export-github promptEnv=true terminalRows=10 }
+set -ex
+
+cd .github/workflows/
+
+ls
+
+cue cmd genworkflows
+
+ls
+
+git diff .
+```

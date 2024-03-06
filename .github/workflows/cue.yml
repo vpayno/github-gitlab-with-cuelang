@@ -1,28 +1,20 @@
----
-#
-# .github/workflows/cue.yml
-#
 name: Cue Workflow
-
 "on":
   push:
     branches:
       - main
       - develop
-  pull_request:
-
+  pull_request: null
 env:
   GH_HEAD_REF: ${{ github.head_ref }}
   REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 defaults:
   run:
     shell: bash
-
 jobs:
   cue-change-check:
     name: Change Check
-    runs-on: 'ubuntu-latest'
+    runs-on: ubuntu-latest
     outputs:
       docs_changed: ${{ steps.check_file_changed.outputs.docs_changed }}
     steps:
@@ -61,8 +53,9 @@ jobs:
     name: Cue Checks
     strategy:
       matrix:
-        os: ["ubuntu-latest"]  # "windows-latest", "macos-latest"
-    runs-on: "${{ matrix.os }}"
+        os:
+          - ubuntu-latest
+    runs-on: ${{ matrix.os }}
     outputs:
       checks_completed: ${{ steps.cue_checks_end.outputs.checks_completed }}
     needs:
@@ -80,11 +73,10 @@ jobs:
         id: setup-go
         uses: actions/setup-go@v5
         with:
-          go-version-file: './go.mod'
+          go-version-file: ./go.mod
       - name: Show Go version
         id: go-version
-        run: |-
-          go version
+        run: go version
       - name: Install bash 5.0 under macOS for mapfile
         id: update-bash-on-macos
         if: contains( matrix.os, 'macos')
@@ -101,25 +93,37 @@ jobs:
       - uses: cue-lang/setup-cue@v1.0.1
         id: setup-cue
         with:
-          version: 'latest'
+          version: latest
       - name: Cue Version
         id: cue-version
-        run: |-
-          cue version
-      - name: Testing with cue
-        id: cue-eval
+        run: cue version
+      - name: Setup Reviewdog
+        id: reviewdog-setup
+        uses: reviewdog/action-setup@v1
+      - name: Reviewdog Version
+        id: reviewdog-version
+        run: reviewdog -version
+      - name: Testing with revive
+        id: go-test-revive
         if: matrix.os == 'ubuntu-latest'
         run: |-
-          # go install cuelang.org/go/cmd/cue@latest
-          cue eval ./.github/workflows/*cue
+          go install github.com/mgechev/revive@latest || go install github.com/mgechev/revive@master
+          revive ./... | reviewdog -tee -efm="%f:%l:%c: %m" -name="revive" -reporter=github-check
       - name: Action Summary
         id: gh-action-summary
         if: matrix.os == 'ubuntu-latest'
         run: |-
           {
-            printf "### Workflows Dir\n\n"
+            printf "### Code Coverage Summary\n\n"
             printf '```\n'
-            ls -lh .github/workflows/
+            cat reports/coverage-summary.txt
+            printf '```\n'
+            printf "\n"
+          } >> "${GITHUB_STEP_SUMMARY}"
+          {
+            printf "### Code Coverage Annotations\n\n"
+            printf '```\n'
+            cat reports/coverage-annotations.txt
             printf '```\n'
             printf "\n"
           } >> "${GITHUB_STEP_SUMMARY}"
@@ -130,11 +134,10 @@ jobs:
           printf "%s=%s\n" "checks_completed" "true" >> "${GITHUB_OUTPUT}"
   go-check-barrier:
     name: go-check-barrier-job
-    runs-on: 'ubuntu-latest'
+    runs-on: ubuntu-latest
     needs:
       - cue_checks
     if: needs.cue_checks.outputs.checks_completed == 'True'
     steps:
       - name: Do nothing step to mark this workflow as "completed"
-        run: |-
-          true
+        run: "true"
