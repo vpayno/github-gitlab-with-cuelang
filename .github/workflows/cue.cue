@@ -50,7 +50,7 @@ CueWorkflow: {
 					fi
 					printf \"\\n\"
 
-					# Did Golang files change?
+					# Did Cue files change?
 					printf \"=== Did Cue, Yaml, Json files change? ===\\n\"
 					printf \"%s\\n\" \"${HAS_DIFF}\"
 					printf \"\\n\"
@@ -114,39 +114,35 @@ CueWorkflow: {
 				id:   "reviewdog-setup"
 				uses: "reviewdog/action-setup@v1"
 			}, {
-				name: "Reviewdog Version"
-				id:   "reviewdog-version"
-				run:  "reviewdog -version"
-			}, {
-				name: "Testing with revive"
-				id:   "go-test-revive"
-				if:   "matrix.os == 'ubuntu-latest'"
-				run: """
-					go install github.com/mgechev/revive@latest || go install github.com/mgechev/revive@master
-					revive ./... | reviewdog -tee -efm=\"%f:%l:%c: %m\" -name=\"revive\" -reporter=github-check
-					"""
-			}, {
-				name: "Action Summary"
-				id:   "gh-action-summary"
+				name: "Cue Eval"
+				id:   "cue-eval"
 				if:   "matrix.os == 'ubuntu-latest'"
 				run: """
 					{
-					  printf \"### Code Coverage Summary\\n\\n\"
+					  printf \"### Cue Eval\\n\\n\"
 					  printf '```\\n'
-					  cat reports/coverage-summary.txt
-					  printf '```\\n'
-					  printf \"\\n\"
-					} >> \"${GITHUB_STEP_SUMMARY}\"
-					{
-					  printf \"### Code Coverage Annotations\\n\\n\"
-					  printf '```\\n'
-					  cat reports/coverage-annotations.txt
+					  cd .github/workflows
+					  cue eval
 					  printf '```\\n'
 					  printf \"\\n\"
 					} >> \"${GITHUB_STEP_SUMMARY}\"
 					"""
 			}, {
-				name: "Last Go Check"
+				name: "Cue Vet"
+				id:   "cue-vet"
+				if:   "matrix.os == 'ubuntu-latest'"
+				run: """
+					{
+					  printf \"### Cue Vet\\n\\n\"
+					  printf '```\\n'
+					  cd .github/workflows
+					  cue vet || cue vet -c
+					  printf '```\\n'
+					  printf \"\\n\"
+					} >> \"${GITHUB_STEP_SUMMARY}\"
+					"""
+			}, {
+				name: "Last Cue Check"
 				id:   "cue_checks_end"
 				run: """
 					# Set the output named \"checks_completed\"
