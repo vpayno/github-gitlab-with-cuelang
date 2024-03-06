@@ -35,3 +35,26 @@ cue import --verbose --force --path '#Workflow:' --package github jsonschema: ./
 
 ls
 ```
+
+## Importing Workflows to Cue
+
+This should only be run once. It's here as documentation and it was used for the original import.
+
+```bash { background=false category=github-import closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=workflow-import-github promptEnv=true terminalRows=10 }
+set -ex
+
+if [[ -f .runme-lock-github-workflow-import ]]; then
+    printf "GitHub Workflows were already imported.\n"
+    exit
+fi
+
+cd .github/workflows/
+
+ls
+
+cue import -p workflows -l 'strings.Replace(name, " ", "", -1)' ./*.yml
+
+ls
+
+touch "$(git rev-parse --show-toplevel)/.runme-lock-github-workflow-import"
+```

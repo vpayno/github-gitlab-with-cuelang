@@ -4,5 +4,8 @@
 # coverage
 /reports
 
+# runme locks
+/.runme-lock-github-workflow-import
+
 # vs code
 /.vscode
