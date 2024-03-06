@@ -52,7 +52,7 @@ cd .github/workflows/
 
 ls
 
-cue import -p workflows -l 'strings.Replace(name, " ", "", -1)' ./*.yml
+cue import -f -p workflows -l 'strings.Replace(name, " ", "", -1)' ./*.yml
 
 ls
 
