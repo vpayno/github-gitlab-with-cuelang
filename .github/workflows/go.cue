@@ -8,7 +8,11 @@ GoWorkflow: {
 			"main",
 			"develop",
 		]
-		pull_request: types: ["opened"]
+		pull_request: types: [
+			"opened",
+			"synchronize",
+			"reopened",
+		]
 	}
 
 	env: {

@@ -9,6 +9,8 @@ name: Go Workflow
   pull_request:
     types:
       - opened
+      - synchronize
+      - reopened
 
 env:
   GH_HEAD_REF: ${{ github.head_ref }}
