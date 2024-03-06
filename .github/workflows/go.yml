@@ -1,16 +1,23 @@
+---
 name: Go Workflow
+
 "on":
   push:
     branches:
       - main
       - develop
-  pull_request: null
+  pull_request:
+    types:
+      - opened
+
 env:
   GH_HEAD_REF: ${{ github.head_ref }}
   REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 defaults:
   run:
     shell: bash
+
 jobs:
   go-change-check:
     name: Change Check
@@ -126,12 +133,13 @@ jobs:
       - name: Testing with go test
         id: go-test-run
         run: |-
-          #go install github.com/rakyll/gotest@latest
+          # go install github.com/rakyll/gotest@latest
           go install golang.org/x/tools/cmd/cover@latest
           mkdir -pv ./reports
           {
             printf "### Code Test Summary\n\n"
             printf '```\n'
+            # shellcheck disable=SC2046
             go test -v -covermode=count -coverprofile=./reports/.coverage.out $(go list ./... | grep -v /ci/)
             printf '```\n'
             printf "\n"

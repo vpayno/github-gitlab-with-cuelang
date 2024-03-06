@@ -1,9 +1,6 @@
 package workflows
 
 CueWorkflow: {
-	//
-	// .github/workflows/cue.yml
-	//
 	name: "Cue Workflow"
 
 	on: {
@@ -11,7 +8,7 @@ CueWorkflow: {
 			"main",
 			"develop",
 		]
-		pull_request: null
+		pull_request: types: ["opened"]
 	}
 
 	env: {
@@ -66,7 +63,7 @@ CueWorkflow: {
 
 		cue_checks: {
 			name: "Cue Checks"
-			strategy: matrix: os: ["ubuntu-latest"] // "windows-latest", "macos-latest"
+			strategy: matrix: os: ["ubuntu-latest"]
 			"runs-on": "${{ matrix.os }}"
 			outputs: checks_completed: "${{ steps.cue_checks_end.outputs.checks_completed }}"
 			needs: ["cue-change-check"]
@@ -105,7 +102,6 @@ CueWorkflow: {
 					"""
 			}, {
 				name: "Setup Cue"
-			}, {
 				uses: "cue-lang/setup-cue@v1.0.1"
 				id:   "setup-cue"
 				with: version: "latest"

@@ -1,18 +1,14 @@
 package workflows
 
 GoWorkflow: {
-	//
-	// .github/workflows/go.yml
-	//
 	name: "Go Workflow"
-	on: {// yamllint disable-line rule:truthy
-		push: {
-			branches: [
-				"main",
-				"develop",
-			]
-		}
-		pull_request: null
+
+	on: {
+		push: branches: [
+			"main",
+			"develop",
+		]
+		pull_request: types: ["opened"]
 	}
 
 	env: {
@@ -67,7 +63,7 @@ GoWorkflow: {
 
 		go_checks: {
 			name: "Go Checks"
-			strategy: matrix: os: ["ubuntu-latest"] // "windows-latest", "macos-latest"
+			strategy: matrix: os: ["ubuntu-latest"]
 			"runs-on": "${{ matrix.os }}"
 			outputs: checks_completed: "${{ steps.go_checks_end.outputs.checks_completed }}"
 			needs: ["go-change-check"]
@@ -152,12 +148,13 @@ GoWorkflow: {
 				name: "Testing with go test"
 				id:   "go-test-run"
 				run: """
-					#go install github.com/rakyll/gotest@latest
+					# go install github.com/rakyll/gotest@latest
 					go install golang.org/x/tools/cmd/cover@latest
 					mkdir -pv ./reports
 					{
 					  printf \"### Code Test Summary\\n\\n\"
 					  printf '```\\n'
+					  # shellcheck disable=SC2046
 					  go test -v -covermode=count -coverprofile=./reports/.coverage.out $(go list ./... | grep -v /ci/)
 					  printf '```\\n'
 					  printf \"\\n\"
