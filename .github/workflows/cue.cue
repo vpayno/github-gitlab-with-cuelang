@@ -155,8 +155,8 @@ CueWorkflow: {
 			}]
 		}
 
-		"go-check-barrier": {
-			name:      "go-check-barrier-job"
+		"cue-check-barrier": {
+			name:      "cue-check-barrier-job"
 			"runs-on": "ubuntu-latest"
 			needs: ["cue_checks"]
 			if: "needs.cue_checks.outputs.checks_completed == 'True'"
