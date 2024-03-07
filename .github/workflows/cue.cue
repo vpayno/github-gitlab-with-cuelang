@@ -124,7 +124,9 @@ CueWorkflow: _#myWorkflow & {
 					  printf \"### Cue Vet\\n\\n\"
 					  printf '```\\n'
 					  cd .github/workflows
-					  cue vet || cue vet -c
+					  if cue vet || cue vet -c; then
+					    printf "No errors\\n"
+					  fi
 					  printf '```\\n'
 					  printf \"\\n\"
 					} >> \"${GITHUB_STEP_SUMMARY}\"
@@ -138,7 +140,9 @@ CueWorkflow: _#myWorkflow & {
 					  printf \"### Cue Yaml Regenerate\\n\\n\"
 					  printf '```\\n'
 					  cd .github/workflows
-					  cue cmd genworkflows
+					  if cue cmd genworkflows; then
+					    printf "No errors\\n"
+					  fi
 					  printf '```\\n'
 					  printf \"\\n\"
 					} >> \"${GITHUB_STEP_SUMMARY}\"
