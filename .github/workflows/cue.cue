@@ -29,7 +29,6 @@ CueWorkflow: _#myWorkflow & {
 				name: "Checkout Repo"
 				id:   "checkout-repo"
 				uses: "actions/checkout@v3"
-				run:  ""
 				with: {
 					"fetch-depth": 0
 					ref:           "${{ github.ref }}"
@@ -38,7 +37,6 @@ CueWorkflow: _#myWorkflow & {
 			}, {
 				name: "Get Change List"
 				id:   "check_file_changed"
-				uses: ""
 				run: """
 					# Diff HEAD with the previous commit then output to stdout.
 					printf \"=== Which files changed? ===\\n\"
@@ -76,7 +74,6 @@ CueWorkflow: _#myWorkflow & {
 				name: "Checkout Repo"
 				id:   "checkout-repo"
 				uses: "actions/checkout@v4"
-				run:  ""
 				with: {
 					"fetch-depth": 0
 					ref:           "${{ github.ref }}"
@@ -86,18 +83,15 @@ CueWorkflow: _#myWorkflow & {
 				name: "Set up Go (using version in go.mod)"
 				id:   "setup-go"
 				uses: "actions/setup-go@v5"
-				run:  ""
 				with: "go-version-file": "./go.mod"
 			}, {
 				name: "Show Go version"
 				id:   "go-version"
-				uses: ""
 				run:  "go version"
 			}, {
 				name: "Install bash 5.0 under macOS for mapfile"
 				id:   "update-bash-on-macos"
 				if:   "contains( matrix.os, 'macos')"
-				uses: ""
 				run: """
 					printf \"Before:\\n\"
 					command -v bash
@@ -111,24 +105,20 @@ CueWorkflow: _#myWorkflow & {
 			}, {
 				name: "Setup Cue"
 				uses: "cue-lang/setup-cue@v1.0.1"
-				run:  ""
 				id:   "setup-cue"
 				with: version: "latest"
 			}, {
 				name: "Cue Version"
 				id:   "cue-version"
-				uses: ""
 				run:  "cue version"
 			}, {
 				name: "Setup Reviewdog"
 				id:   "reviewdog-setup"
 				uses: "reviewdog/action-setup@v1"
-				run:  ""
 			}, {
 				name: "Cue Eval"
 				id:   "cue-eval"
 				if:   "matrix.os == 'ubuntu-latest'"
-				uses: ""
 				run: """
 					{
 					  printf \"### Cue Eval\\n\\n\"
@@ -143,7 +133,6 @@ CueWorkflow: _#myWorkflow & {
 				name: "Cue Vet"
 				id:   "cue-vet"
 				if:   "matrix.os == 'ubuntu-latest'"
-				uses: ""
 				run: """
 					{
 					  printf \"### Cue Vet\\n\\n\"
@@ -157,7 +146,6 @@ CueWorkflow: _#myWorkflow & {
 			}, {
 				name: "Last Cue Check"
 				id:   "cue_checks_end"
-				uses: ""
 				run: """
 					# Set the output named \"checks_completed\"
 					printf \"%s=%s\\n\" \"checks_completed\" \"true\" >> \"${GITHUB_OUTPUT}\"
@@ -172,7 +160,6 @@ CueWorkflow: _#myWorkflow & {
 			if: "needs.cue_checks.outputs.checks_completed == 'True'"
 			steps: [{
 				name: "Do nothing step to mark this workflow as \"completed\""
-				uses: ""
 				run:  "true"
 			}]
 		}

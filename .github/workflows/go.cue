@@ -29,7 +29,6 @@ GoWorkflow: _#myWorkflow & {
 				name: "Checkout Repo"
 				id:   "checkout-repo"
 				uses: "actions/checkout@v3"
-				run:  ""
 				with: {
 					"fetch-depth": 0
 					ref:           "${{ github.ref }}"
@@ -38,7 +37,6 @@ GoWorkflow: _#myWorkflow & {
 			}, {
 				name: "Get Change List"
 				id:   "check_file_changed"
-				uses: ""
 				run: """
 					# Diff HEAD with the previous commit then output to stdout.
 					printf \"=== Which files changed? ===\\n\"
@@ -76,7 +74,6 @@ GoWorkflow: _#myWorkflow & {
 				name: "Checkout Repo"
 				id:   "checkout-repo"
 				uses: "actions/checkout@v4"
-				run:  ""
 				with: {
 					"fetch-depth": 0
 					ref:           "${{ github.ref }}"
@@ -86,18 +83,15 @@ GoWorkflow: _#myWorkflow & {
 				name: "Set up Go (using version in go.mod)"
 				id:   "setup-go"
 				uses: "actions/setup-go@v5"
-				run:  ""
 				with: "go-version-file": "./go.mod"
 			}, {
 				name: "Show Go version"
 				id:   "go-version"
-				uses: ""
 				run:  "go version"
 			}, {
 				name: "Install bash 5.0 under macOS for mapfile"
 				id:   "update-bash-on-macos"
 				if:   "contains( matrix.os, 'macos')"
-				uses: ""
 				run: """
 					printf \"Before:\\n\"
 					command -v bash
@@ -112,16 +106,13 @@ GoWorkflow: _#myWorkflow & {
 				name: "Setup Reviewdog"
 				id:   "reviewdog-setup"
 				uses: "reviewdog/action-setup@v1"
-				run:  ""
 			}, {
 				name: "Reviewdog Version"
 				id:   "reviewdog-version"
-				uses: ""
 				run:  "reviewdog -version"
 			}, {
 				name: "Checkout PR Branch"
 				id:   "checkout-pr-branch"
-				uses: ""
 				run: """
 					if ! git branch --show-current | grep -q -E '^(main|develop)$'; then
 					  git status
@@ -133,13 +124,11 @@ GoWorkflow: _#myWorkflow & {
 			}, {
 				name: "Run go generate"
 				id:   "go-generate"
-				uses: ""
 				run:  "go generate ./..."
 			}, {
 				name: "Testing with revive"
 				id:   "go-test-revive"
 				if:   "matrix.os == 'ubuntu-latest'"
-				uses: ""
 				run: """
 					go install github.com/mgechev/revive@latest || go install github.com/mgechev/revive@master
 					revive ./... | reviewdog -tee -efm=\"%f:%l:%c: %m\" -name=\"revive\" -reporter=github-check
@@ -148,13 +137,11 @@ GoWorkflow: _#myWorkflow & {
 				name: "Analyzing the code with go vet"
 				id:   "go-vet"
 				if:   "matrix.os == 'ubuntu-latest'"
-				uses: ""
 				run:  "go vet ./... | reviewdog -tee -f govet -reporter=github-check"
 			}, {
 				name: "Testing with gosec"
 				id:   "go-test-security"
 				if:   "matrix.os == 'ubuntu-latest'"
-				uses: ""
 				run: """
 					go install github.com/securego/gosec/v2/cmd/gosec@latest
 					gosec ./... | reviewdog -tee -f gosec -reporter=github-check
@@ -162,7 +149,6 @@ GoWorkflow: _#myWorkflow & {
 			}, {
 				name: "Testing with go test"
 				id:   "go-test-run"
-				uses: ""
 				run: """
 					# go install github.com/rakyll/gotest@latest
 					go install golang.org/x/tools/cmd/cover@latest
@@ -180,7 +166,6 @@ GoWorkflow: _#myWorkflow & {
 				name: "Generate coverage.xml"
 				id:   "go-generate-coverage-xml"
 				if:   "matrix.os == 'ubuntu-latest'"
-				uses: ""
 				run: """
 					go install github.com/t-yuki/gocover-cobertura@latest
 					gocover-cobertura < ./reports/.coverage.out > ./reports/coverage.xml
@@ -190,17 +175,14 @@ GoWorkflow: _#myWorkflow & {
 				name: "Test Coverage Report (txt)"
 				id:   "go-test-coverage-txt"
 				if:   "matrix.os == 'ubuntu-latest'"
-				uses: ""
 				run:  "go tool cover -func=./reports/.coverage.out | tee reports/coverage.txt"
 			}, {
 				name: "Test Coverage Report (html)"
 				id:   "go-test-coverage-html"
-				uses: ""
 				run:  "go tool cover -html=./reports/.coverage.out -o=reports/coverage.html"
 			}, {
 				name: "Show Missing Coverage"
 				id:   "go-test-coverage-annotate"
-				uses: ""
 				run: """
 					go install github.com/axw/gocov/gocov@latest
 					gocov convert ./reports/.coverage.out | gocov annotate -ceiling=100 -color - | tee reports/coverage-annotations.txt
@@ -208,13 +190,11 @@ GoWorkflow: _#myWorkflow & {
 			}, {
 				name: "gocov Coverage Report"
 				id:   "go-test-coverage-report"
-				uses: ""
 				run:  "gocov convert ./reports/.coverage.out | gocov report | tee reports/coverage-summary.txt"
 			}, {
 				name: "Action Summary"
 				id:   "gh-action-summary"
 				if:   "matrix.os == 'ubuntu-latest'"
-				uses: ""
 				run: """
 					{
 					  printf \"### Code Coverage Summary\\n\\n\"
@@ -234,7 +214,6 @@ GoWorkflow: _#myWorkflow & {
 			}, {
 				name: "Last Go Check"
 				id:   "go_checks_end"
-				uses: ""
 				run: """
 					# Set the output named \"checks_completed\"
 					printf \"%s=%s\\n\" \"checks_completed\" \"true\" >> \"${GITHUB_OUTPUT}\"
@@ -249,7 +228,6 @@ GoWorkflow: _#myWorkflow & {
 			if: "needs.go_checks.outputs.checks_completed == 'True'"
 			steps: [{
 				name: "Do nothing step to mark this workflow as \"completed\""
-				uses: ""
 				run:  "true"
 			}]
 		}
