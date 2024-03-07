@@ -29,9 +29,29 @@ mkdir -pv ./cue.mod/pkg/json.schemastore.org/github
 
 cd ./cue.mod/pkg/json.schemastore.org/github
 
+rm -fv ./github-workflow.json
+
 wget -c https://json.schemastore.org/github-workflow.json
 
 cue import --verbose --force --path '#Workflow:' --package github jsonschema: ./github-workflow.json
+
+ls
+```
+
+- [GitLab CI](https://gitlab.com/gitlab-org/gitlab/-/raw/master/app/assets/javascripts/editor/schema/ci.json)
+
+```bash { background=false category=schema-import closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=schema-import-gitlab promptEnv=true terminalRows=10 }
+set -ex
+
+mkdir -pv ./cue.mod/pkg/json.schemastore.org/gitlab
+
+cd ./cue.mod/pkg/json.schemastore.org/gitlab
+
+rm -fv ./gitlab-ci.json
+
+wget -c https://gitlab.com/gitlab-org/gitlab/-/raw/master/app/assets/javascripts/editor/schema/ci.json -O ./gitlab-ci.json
+
+cue import --verbose --force --path '#GitLabCi:' --package gitlab jsonschema: ./gitlab-ci.json
 
 ls
 ```
