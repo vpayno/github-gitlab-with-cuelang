@@ -736,10 +736,10 @@ import "strings"
 		// provides built-in steps to set up and complete a job.
 		// Must contain either `uses` or `run`
 		steps?: [...({
-			uses: string
+			uses?: string
 			...
 		} | {
-			run: string
+			run?: string
 			...
 		}) & {
 			// A unique identifier for the step. You can use the id to
