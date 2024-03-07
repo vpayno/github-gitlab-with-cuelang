@@ -4,20 +4,6 @@ CueWorkflow: _#myWorkflow & {
 	name: "Cue Workflow"
 
 	on: {
-		push: branches: [
-			"main",
-			"develop",
-		]
-		pull_request: types: [
-			"opened",
-			"synchronize",
-			"reopened",
-		]
-	}
-
-	env: {
-		GH_HEAD_REF:                "${{ github.head_ref }}"
-		REVIEWDOG_GITHUB_API_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 	}
 
 	jobs: {
