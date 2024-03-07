@@ -1,6 +1,6 @@
 package workflows
 
-CueWorkflow: {
+CueWorkflow: _#myWorkflow & {
 	name: "Cue Workflow"
 
 	on: {
@@ -19,8 +19,6 @@ CueWorkflow: {
 		GH_HEAD_REF:                "${{ github.head_ref }}"
 		REVIEWDOG_GITHUB_API_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 	}
-
-	defaults: run: shell: "bash"
 
 	jobs: {
 		"cue-change-check": {

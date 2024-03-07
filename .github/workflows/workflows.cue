@@ -18,3 +18,7 @@ workflows: [
 		name:     GoWorkflow
 	},
 ]
+
+_#myWorkflow: github.#Workflow & {
+	defaults: run: shell: "bash"
+}

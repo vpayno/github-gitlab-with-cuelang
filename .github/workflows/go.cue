@@ -1,6 +1,6 @@
 package workflows
 
-GoWorkflow: {
+GoWorkflow: _#myWorkflow & {
 	name: "Go Workflow"
 
 	on: {
@@ -19,8 +19,6 @@ GoWorkflow: {
 		GH_HEAD_REF:                "${{ github.head_ref }}"
 		REVIEWDOG_GITHUB_API_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 	}
-
-	defaults: run: shell: "bash"
 
 	jobs: {
 		"go-change-check": {
