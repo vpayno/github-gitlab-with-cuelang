@@ -58,6 +58,34 @@ ls
 touch "$(git rev-parse --show-toplevel)/.runme-lock-github-workflow-import"
 ```
 
+## Running `cue vet`
+
+To validate the cue files:
+
+```bash { background=false category=github-validate closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=workflow-vet-github promptEnv=true terminalRows=10 }
+set -ex
+
+cd .github/workflows/
+
+ls
+
+cue vet || { printf "\n"; cue vet -c; }
+```
+
+## Running `cue export`
+
+To test the cue files:
+
+```bash { background=false category=github-validate closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=workflow-test-github promptEnv=true terminalRows=10 }
+set -ex
+
+cd .github/workflows/
+
+ls
+
+cue export | less
+```
+
 ## Generating Workflows from Cue Data
 
 To export the workflows run the following command:
