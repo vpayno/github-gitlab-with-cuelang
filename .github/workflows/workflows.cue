@@ -19,6 +19,12 @@ workflows: [
 	},
 ]
 
+// TODO: drop when cuelang.org/issue/390 is fixed.
+// https://github.com/cue-lang/cue/issues/390
+// Declare definitions for sub-schemas so we can refer to them.
+_#job:  ((github.#Workflow & {}).jobs & {x: _}).x
+_#step: ((_#job & {steps:                   _}).steps & [_])[0]
+
 _#myWorkflow: github.#Workflow & {
 	defaults: run: shell: "bash"
 
