@@ -45,3 +45,17 @@ _#myWorkflow: github.#Workflow & {
 		REVIEWDOG_GITHUB_API_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 	}
 }
+
+// when used, this causes a stack trace
+_#useActionSetupGo: _#step & {
+	name: "Set up Go (using version in go.mod)"
+	id:   "setup-go"
+	uses: "actions/setup-go@v5"
+	with: "go-version-file": "./go.mod"
+}
+
+_#stepShowGoVersion: _#step & {
+	name: "Show Go version"
+	id:   "go-version"
+	run:  "go version"
+}
