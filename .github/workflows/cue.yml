@@ -1,4 +1,7 @@
 name: Cue Workflow
+defaults:
+  run:
+    shell: bash
 "on":
   push:
     branches:
@@ -12,9 +15,6 @@ name: Cue Workflow
 env:
   GH_HEAD_REF: ${{ github.head_ref }}
   REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-defaults:
-  run:
-    shell: bash
 jobs:
   cue-change-check:
     name: Change Check
@@ -22,9 +22,9 @@ jobs:
     outputs:
       docs_changed: ${{ steps.check_file_changed.outputs.docs_changed }}
     steps:
-      - name: Checkout Repo
-        id: checkout-repo
-        uses: actions/checkout@v3
+      - id: checkout-repo
+        name: Checkout Repo
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ github.ref }}
@@ -66,24 +66,24 @@ jobs:
       - cue-change-check
     if: needs.cue-change-check.outputs.docs_changed == 'True'
     steps:
-      - name: Checkout Repo
-        id: checkout-repo
+      - id: checkout-repo
+        name: Checkout Repo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ github.ref }}
           submodules: recursive
-      - name: Set up Go (using version in go.mod)
-        id: setup-go
+      - id: setup-go
+        name: Set up Go (using version in go.mod)
         uses: actions/setup-go@v5
         with:
           go-version-file: ./go.mod
-      - name: Show Go version
-        id: go-version
+      - id: go-version
+        name: Show Go version
         run: go version
-      - name: Install bash 5.0 under macOS for mapfile
-        id: update-bash-on-macos
+      - id: update-bash-on-macos
         if: contains( matrix.os, 'macos')
+        name: Install bash 5.0 under macOS for mapfile
         run: |-
           printf "Before:\n"
           command -v bash
@@ -101,9 +101,12 @@ jobs:
       - name: Cue Version
         id: cue-version
         run: cue version
-      - name: Setup Reviewdog
-        id: reviewdog-setup
+      - id: reviewdog-setup
+        name: Setup Reviewdog
         uses: reviewdog/action-setup@v1
+      - id: reviewdog-version
+        name: Show Reviewdog version
+        run: reviewdog -version
       - name: Cue Eval
         id: cue-eval
         if: matrix.os == 'ubuntu-latest'
