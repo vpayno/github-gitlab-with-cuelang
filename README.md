@@ -86,6 +86,24 @@ ls
 cue export | less
 ```
 
+## Running `cue trim`
+
+To trim the exported data:
+
+```bash { background=false category=github-trim closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=workflow-trim-github promptEnv=true terminalRows=10 }
+set -ex
+
+cd .github/workflows/
+
+ls
+
+cue trim
+
+ls
+
+git diff .
+```
+
 ## Generating Workflows from Cue Data
 
 To export the workflows run the following command:
